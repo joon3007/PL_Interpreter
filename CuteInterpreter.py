@@ -319,44 +319,44 @@ class CuteInterpreter(object):
     FALSE_NODE = Node(TokenType.FALSE)
 
     def run_arith(self, arith_node):
-	rhs1 = arith_node.next
-	rhs2 = rhs1.next if rhs1.next is not None else None
+        rhs1 = arith_node.next
+        rhs2 = rhs1.next if rhs1.next is not None else None
 
-	expr_rhs1 = self.run_expr(rhs1)
-	expr_rhs2 = self.run_expr(rhs2)
-	if expr_rhs1 is None or expr_rhs2 is None:
-	    return False
+        expr_rhs1 = self.run_expr(rhs1)
+        expr_rhs2 = self.run_expr(rhs2)
+        if expr_rhs1 is None or expr_rhs2 is None:
+            return False
 	
-	if arith_node.type is TokenType.PLUS :
-	    value = int(expr_rhs1.value) + int(expr_rhs2.value)
-	    result = Node(TokenType.INT, value)
-	    return result
-	elif arith_node.type is TokenType.MINUS :
-	    value = int(expr_rhs1.value) - int(expr_rhs2.value)
-	    result = Node(TokenType.INT, value)
-	    return result
-	elif arith_node.type is TokenType.TIMES :
-	    value = int(expr_rhs1.value) * int(expr_rhs2.value)
-	    result = Node(TokenType.INT, value)
-	    return result
-	elif arith_node.type is TokenType.DIV :
-	    if expr_rhs2.value is '0' :
-		return False
-	    value = int(expr_rhs1.value) / int(expr_rhs2.value)
-	    result = Node(TokenType.INT, value)
-	    return result
-	elif arith_node.type is TokenType.GT :
-	    if int(expr_rhs1.value) > int(expr_rhs2.value) :
-		return self.TRUE_NODE
-	    return self.FALSE_NODE
-	elif arith_node.type is TokenType.LT :
-	    if int(expr_rhs1.value) < int(expr_rhs2.value) :
-		return self.TRUE_NODE
-	    return self.FALSE_NODE
-	elif arith_node.type is TokenType.EQ :
-	    if int(expr_rhs1.value) is int(expr_rhs2.value):
-		return self.TRUE_NODE
-	    return self.FALSE_NODE
+        if arith_node.type is TokenType.PLUS :
+            value = int(expr_rhs1.value) + int(expr_rhs2.value)
+            result = Node(TokenType.INT, value)
+            return result
+        elif arith_node.type is TokenType.MINUS :
+            value = int(expr_rhs1.value) - int(expr_rhs2.value)
+            result = Node(TokenType.INT, value)
+            return result
+        elif arith_node.type is TokenType.TIMES :
+            value = int(expr_rhs1.value) * int(expr_rhs2.value)
+            result = Node(TokenType.INT, value)
+            return result
+        elif arith_node.type is TokenType.DIV :
+            if expr_rhs2.value is '0' :
+                return False
+            value = int(expr_rhs1.value) / int(expr_rhs2.value)
+            result = Node(TokenType.INT, value)
+            return result
+        elif arith_node.type is TokenType.GT :
+            if int(expr_rhs1.value) > int(expr_rhs2.value) :
+                return self.TRUE_NODE
+            return self.FALSE_NODE
+        elif arith_node.type is TokenType.LT :
+            if int(expr_rhs1.value) < int(expr_rhs2.value) :
+                return self.TRUE_NODE
+            return self.FALSE_NODE
+        elif arith_node.type is TokenType.EQ :
+            if int(expr_rhs1.value) is int(expr_rhs2.value):
+                return self.TRUE_NODE
+            return self.FALSE_NODE
 	
 
     def run_func(self, func_node):
@@ -378,7 +378,8 @@ class CuteInterpreter(object):
                 q_node.next = node
             l_node = Node(TokenType.LIST, q_node)
             return l_node
-	def create_cond_node(node, list_flag = False):
+
+        def create_cond_node(node, list_flag=False):
             c_node = Node(TokenType.COND)
             if list_flag:
                 inner_l_node = Node(TokenType.LIST, node)
@@ -387,7 +388,6 @@ class CuteInterpreter(object):
                 c_node.next = node
             l_node = Node(TokenType.LIST, c_node)
             return l_node
-
 
 
         def is_quote_list(node):
@@ -410,6 +410,11 @@ class CuteInterpreter(object):
             if node is None:return True
             return False
 
+        def insertTable(id, value):
+            value = str(value)
+            result = {id : value }
+            return result
+
         if func_node.type is TokenType.CAR:
             rhs1 = self.run_expr(rhs1)
             if not is_quote_list(rhs1):
@@ -421,25 +426,25 @@ class CuteInterpreter(object):
 
         elif func_node.type is TokenType.CDR:
             #작성
- 	    rhs1 = self.run_expr(rhs1)
-	    if not is_quote_list(rhs1):
-	  	print ("cdr error!")
-	    node = rhs1.value.next
-	    node.value = node.value.next
-	    result = create_quote_node(node)
-	    return result
+            rhs1 = self.run_expr(rhs1)
+            if not is_quote_list(rhs1):
+                print ("cdr error!")
+            node = rhs1.value.next
+            node.value = node.value.next
+            result = create_quote_node(node)
+            return result
 	
         elif func_node.type is TokenType.CONS:
             expr_rhs1 = self.run_expr(rhs1)
             expr_rhs2 = self.run_expr(rhs2)
             #작성
-	    if expr_rhs1.type is TokenType.LIST:
-		if expr_rhs1.value.type is TokenType.QUOTE:
-		    expr_rhs1 = expr_rhs1.value.next
-	    node = expr_rhs2.value.next
-	    expr_rhs1.next = node.value
-	    result = Node(TokenType.LIST, expr_rhs1)
-	    return create_quote_node(result)
+            if expr_rhs1.type is TokenType.LIST:
+                if expr_rhs1.value.type is TokenType.QUOTE:
+                    expr_rhs1 = expr_rhs1.value.next
+            node = expr_rhs2.value.next
+            expr_rhs1.next = node.value
+            result = Node(TokenType.LIST, expr_rhs1)
+            return create_quote_node(result)
             #rhs2는 무조건 list라고 가정
 	    
 
@@ -455,42 +460,52 @@ class CuteInterpreter(object):
 
         elif func_node.type is TokenType.EQ_Q:
             #작성
-	    rhs1 = self.run_expr(rhs1)
-	    rhs2 = self.run_expr(rhs2)
-	    tem = rhs1.value
-	    tem2 = rhs2.value
+            rhs1 = self.run_expr(rhs1)
+            rhs2 = self.run_expr(rhs2)
+            tem = rhs1.value
+            tem2 = rhs2.value
 	
-	    if tem == tem2 :
-	        return self.TRUE_NODE
-	    return self.FALSE_NODE    
+            if tem == tem2 :
+                return self.TRUE_NODE
+            return self.FALSE_NODE
 
         elif func_node.type is TokenType.NULL_Q:
             if list_is_null(rhs1): return self.TRUE_NODE
             return self.FALSE_NODE
         elif func_node.type is TokenType.NOT:
             expr_rhs1 = self.run_expr(rhs1)
-	    if expr_rhs1.type not in [TokenType.TRUE, TokenType.FALSE] :
-		return None
-	    if expr_rhs1.type is TokenType.TRUE :
-		return self.FALSE_NODE
-	    return self.TRUE_NODE
+            if expr_rhs1.type not in [TokenType.TRUE, TokenType.FALSE] :
+                return None
+            if expr_rhs1.type is TokenType.TRUE :
+                return self.FALSE_NODE
+            return self.TRUE_NODE
 
         elif func_node.type is TokenType.COND:
             cond = None
-	    if rhs1.value.type is TokenType.LIST:
-		cond = self.run_expr(rhs1.value)
-	    else :
-		cond = rhs1.value
-	    if cond.type not in [TokenType.TRUE, TokenType.FALSE]:
-		print "Type Error!"
-		return None
-	    if cond.type is TokenType.TRUE :
-		return self.run_expr(rhs1.value.next)
-	    else :
-		node = create_cond_node(rhs2)
-		return self.run_expr(node)
+            if rhs1.value.type is TokenType.LIST:
+                cond = self.run_expr(rhs1.value)
+            else :
+                cond = rhs1.value
+            if cond.type not in [TokenType.TRUE, TokenType.FALSE]:
+                print "Type Error!"
+                return None
+            if cond.type is TokenType.TRUE :
+                return self.run_expr(rhs1.value.next)
+            else :
+                node = create_cond_node(rhs2)
+                return self.run_expr(node)
+
+        elif func_node.type is TokenType.DEFINE:
+            if rhs2.type is TokenType.LIST:
+                expr_rhs2 = self.run_expr(rhs2)
+            else :
+                expr_rhs2 = rhs2
+            result = insertTable(rhs1.value, expr_rhs2.value)
+            return result
         else:
             return None
+
+
 
     def run_expr(self, root_node):
         """
@@ -522,12 +537,12 @@ class CuteInterpreter(object):
             return l_node
         if op_code.type in \
                 [TokenType.CAR, TokenType.CDR, TokenType.CONS, TokenType.ATOM_Q,\
-                 TokenType.EQ_Q, TokenType.NULL_Q, TokenType.NOT, TokenType.COND]:
+                 TokenType.EQ_Q, TokenType.NULL_Q, TokenType.NOT, TokenType.COND, TokenType.DEFINE]:
             return self.run_func(op_code)
-	elif op_code.type in \
-		[TokenType.PLUS, TokenType.MINUS, TokenType.TIMES, TokenType.DIV, \
-		 TokenType.GT, TokenType.LT, TokenType.EQ]:
-	    return self.run_arith(op_code)
+        elif op_code.type in \
+                [TokenType.PLUS, TokenType.MINUS, TokenType.TIMES, TokenType.DIV, \
+                 TokenType.GT, TokenType.LT, TokenType.EQ]:
+            return self.run_arith(op_code)
         if op_code.type is TokenType.QUOTE:
             return l_node
         else:
@@ -612,7 +627,7 @@ def Test_method(input):
     node = test_basic_paser.parse_expr()
     cute_inter = CuteInterpreter()
     result = cute_inter.run_expr(node)
-    print print_node(result)
+    return result
 
 def Test_All():
     """
@@ -621,7 +636,17 @@ def Test_All():
     Test_method("( > 1 5 )")
     Test_method("( cond ( ( null? ' ( 1 2 3 ) ) 1 ) ( ( > 100 10 ) 2 ) ( #T 3 ) )")
     """
+    defineVal = {}
     while(1):
         val = raw_input("> ")
-        Test_method(val)
+        if val in defineVal:
+            print defineVal.get(val)
+        else :
+            result = Test_method(val)
+            if type(result) is dict:
+                defineVal.update(result)
+                print result
+            else:
+                print print_node(result)
+
 Test_All()
