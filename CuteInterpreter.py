@@ -637,11 +637,22 @@ def Test_All():
     Test_method("( cond ( ( null? ' ( 1 2 3 ) ) 1 ) ( ( > 100 10 ) 2 ) ( #T 3 ) )")
     """
     defineVal = {}
+    def lookupTable(input):
+        string1 = input
+        tem = string1.split()
+        result = None
+        for i in tem:
+            if i in defineVal:
+                string1 = string1.replace(i,defineVal.get(i))
+        return string1
+
     while(1):
         val = raw_input("> ")
         if val in defineVal:
-            print defineVal.get(val)
+            val = lookupTable(val)
+            print val
         else :
+            val = lookupTable(val)
             result = Test_method(val)
             if type(result) is dict:
                 defineVal.update(result)
