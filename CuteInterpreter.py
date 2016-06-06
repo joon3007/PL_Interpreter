@@ -642,12 +642,16 @@ def Test_All():
         tem = string1.split()
         result = None
         for i in tem:
+            if i =='define' :
+                return input
             if i in defineVal:
                 string1 = string1.replace(i,defineVal.get(i))
         return string1
 
     while(1):
         val = raw_input("> ")
+        if val == 'end':
+            exit(0);
         if val in defineVal:
             val = lookupTable(val)
             print val
@@ -655,9 +659,14 @@ def Test_All():
             val = lookupTable(val)
             result = Test_method(val)
             if type(result) is dict:
+                for k in result.keys() :
+                    tem1 = k;
+                    print tem1
+                if tem1 in defineVal :
+                    del defineVal[tem1]
                 defineVal.update(result)
                 print result
             else:
-                print print_node(result)
+                print "..."+str(print_node(result))
 
 Test_All()
